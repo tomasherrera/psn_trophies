@@ -24,5 +24,4 @@ DEPENDENCIES
   fakeweb
   minitest
   minitest-reporters
-  nokogiri (~> 1.5.0)
   psn_trophies!
