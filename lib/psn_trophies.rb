@@ -8,10 +8,38 @@ module PsnTrophies
 
   class Client
 
+    def get_avatar(profile_id)
+      check_profile_id(profile_id)
+      body = get_body("http://us.playstation.com/playstation/psn/profiles/#{profile_id}",
+                      "http://us.playstation.com/publictrophy/index.htm?onlinename=#{profile_id}")
+      doc = Nokogiri::HTML.fragment(body)
+      avatar = doc.css("#id-avatar").children[1].to_a[4][1]
+    end
+
+    def trophies_count(profile_id)
+      check_profile_id(profile_id)
+      body = get_body("http://us.playstation.com/playstation/psn/profiles/#{profile_id}",
+                      "http://us.playstation.com/publictrophy/index.htm?onlinename=#{profile_id}")
+      doc = Nokogiri::HTML.fragment(body)
+      level = doc.css("#levelprogress").children[5].children.first.content.gsub("\r\n","").strip
+      total_trophies = doc.css("#totaltrophies").children.children[1].content.gsub("\r\n","").strip
+      platinum = doc.css(".podium").children.children[0].content.split(" ")[0]
+      gold = doc.css(".podium").children.children[1].content.split(" ")[0]
+      silver = doc.css(".podium").children.children[2].content.split(" ")[0]
+      bronze = doc.css(".podium").children.children[3].content.split(" ")[0]
+      info = ['level' => level, 'total_trophies' => total_trophies, 'platinum' => platinum, 'gold' => gold, 
+        'silver' => silver, 'bronze' => bronze]
+    end
+
+    def get_cover(game)
+      body = get_body("http://us.playstation.com/ps-products/BrowseGames?console=ps3&beginsWith=#{CGI.escape game}", "http://us.playstation.com/ps-products/BrowseGames?console=ps3&beginsWith=#{CGI.escape game}")
+      doc = Nokogiri::HTML.fragment(body)
+      cover = doc.css(".thumb").first.children[0].children.to_a[0]["src"]
+    end
+
     def trophies(profile_id)
       check_profile_id(profile_id)
-      body = get_body("http://us.playstation.com/playstation/psn/profile/#{profile_id}/get_ordered_trophies_data",
-                      "http://us.playstation.com/publictrophy/index.htm?onlinename=#{profile_id}/trophies")
+      body = get_body("http://us.playstation.com/playstation/psn/profile/#{profile_id}/get_ordered_trophies_data","http://us.playstation.com/publictrophy/index.htm?onlinename=#{profile_id}/trophies")
 
       games = []
       doc = Nokogiri::HTML.fragment(body)
@@ -56,7 +84,6 @@ module PsnTrophies
     end
 
   end
-
   class PlayedGame
     attr_accessor :image_url, :title, :progress, :trophy_count
 
