@@ -13,7 +13,7 @@ module PsnTrophies
       body = get_body("http://us.playstation.com/playstation/psn/profiles/#{profile_id}",
                       "http://us.playstation.com/publictrophy/index.htm?onlinename=#{profile_id}")
       doc = Nokogiri::HTML.fragment(body)
-      avatar = doc.css("#id-avatar").children[1].to_a[4][1]
+      avatar = doc.css("#id-avatar").children[1].to_a[3][1]
     end
 
     def trophies_count(profile_id)
@@ -21,13 +21,13 @@ module PsnTrophies
       body = get_body("http://us.playstation.com/playstation/psn/profiles/#{profile_id}",
                       "http://us.playstation.com/publictrophy/index.htm?onlinename=#{profile_id}")
       doc = Nokogiri::HTML.fragment(body)
-      level = doc.css("#levelprogress").children[5].children.first.content.gsub("\r\n","").strip
-      total_trophies = doc.css("#totaltrophies").children.children[1].content.gsub("\r\n","").strip
-      platinum = doc.css(".podium").children.children[0].content.split(" ")[0]
-      gold = doc.css(".podium").children.children[1].content.split(" ")[0]
-      silver = doc.css(".podium").children.children[2].content.split(" ")[0]
-      bronze = doc.css(".podium").children.children[3].content.split(" ")[0]
-      info = ['level' => level, 'total_trophies' => total_trophies, 'platinum' => platinum, 'gold' => gold, 
+      level = doc.css("#levelprogress").children.children[1].content.gsub("\r\n","").strip
+      total_trophies = doc.css("#totaltrophies").children.children[0].content.gsub("\r\n","").strip
+      platinum = doc.css(".podium").children.children[6].content.split(" ")[0]
+      gold = doc.css(".podium").children.children[4].content.split(" ")[0]
+      silver = silver = doc.css(".podium").children.children[2].content.split(" ")[0]
+      bronze = bronze = doc.css(".podium").children.children[0].content.split(" ")[0]
+      info = ['level' => level, 'total_trophies' => total_trophies, 'platinum' => platinum, 'gold' => gold,
         'silver' => silver, 'bronze' => bronze]
     end
 
